@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TWITCH TV STREAMERS</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="https://www.twitch.tv/" target="_blank">
+                <img width="200" src="img/logo.png" alt="Twitch Logo">
+            </a>
+        </div>
+    </header>
+    <div class="container">
+        <header class="text-center">
+
+            <h3 id="fccStatus"></h3>
+        </header>
+        <div class="row">
+            <div class="col-lg-6 offset-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for..." id="filterTextBox" aria-label="Text input">
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 statusTab d-flex flex-row justify-content-center align-items-center">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#allTab" role="tab" id="all">ALL</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#allTab" role="tab" id="online">ONLINE</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#allTab" role="tab" id="offline">OFFLINE</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="allTab" role="tabpanel">
+                <div class="streamers"></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        body {
+            background: #60369F;
+            font-family: 'Scope One', serif;
+        }
+        
+        header img {
+            margin: 0 auto;
+            display: table;
+            margin-bottom: 2em;
+            margin-top: 2em;
+        }
+        
+        .streamers {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .streamer {
+            display: flex;
+            flex-wrap: nowrap;
+            flex: 1 1 auto;
+            flex-direction: row;
+            margin-right: 1%;
+            flex-basis: 32%;
+            align-items: center;
+            margin-bottom: 1%;
+            padding: 1%;
+            cursor: pointer;
+        }
+        
+        .alert {
+            position: relative;
+            padding: 10px;
+        }
+        
+        .alert-dismissible .close {
+            position: absolute;
+            top: 0px;
+            right: 5px;
+            padding: 0px;
+        }
+        
+        .alert>div {
+            flex-basis: 30%
+        }
+        
+        .alert span {
+            text-align: center;
+        }
+        
+        span span {
+            font-size: 10px;
+            display: block;
+        }
+        
+        .alert a {
+            font-weight: 900;
+            letter-spacing: 1px;
+            font-size: 20px;
+        }
+        
+        .alert p {
+            font-size: 14px;
+            letter-spacing: 0px;
+            font-weight: 900;
+        }
+        
+        .alert a:hover {
+            color: #60369F;
+            text-decoration: none;
+        }
+        
+        .alert-success a {
+            color: black;
+        }
+        
+        .alert-danger a {
+            color: gray;
+        }
+        
+        .alert img {
+            width: 30%;
+            height: auto;
+            min-height: 87px;
+        }
+        
+        .content {
+            height: 92px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            -ms-text-overflow: ellipsis;
+            margin: 0 0.8em;
+        }
+        
+        .streamer:nth-child(3n+3) {
+            margin-right: 0 !important;
+        }
+        
+        .nav-tabs {
+            border-bottom: none;
+        }
+        
+        .statusTab {
+            background-color: #363A45;
+            border-top-right-radius: 10px;
+            border-top-left-radius: 10px;
+            height: 50px;
+            border-bottom: 1px solid #000;
+            -moz-box-shadow: inset 0 1px 2px #545861;
+            -webkit-box-shadow: inset 0 1px 2px #545861;
+            box-shadow: inset 0 1px 2px #545861;
+            margin-top: 2em;
+        }
+        
+        .statusTab ul li a.active {
+            color: white;
+            background-color: #1E2128;
+            padding: 0em 0.75em;
+            border-radius: 3px;
+        }
+        
+        .statusTab ul li a {
+            color: #9FA7B5;
+            padding: 0em 0.75em;
+        }
+        
+        .tab-content {
+            margin: 0 auto;
+            display: table;
+            background-color: #252931;
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            border-radius: 0 0 10px 10px;
+            padding: 10px;
+            width: 100%;
+            min-height: 300px;
+        }
+        
+        .alert {
+            -webkit-box-flex: 0;
+            -webkit-flex: 0 0 33.333333%;
+            -ms-flex: 0 0 33.333333%;
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+    </style>
+    <script>
+        let streamers = ["ESL_SC2",
+            "syndicate", "silentsentry", "professorbroman", "bennyfits", "a_seagull", "manvsgame", "grimmmz", "phonecats", "omgitsfirefoxx", "twitchpresents", "riotgames",
+            "esl_csgo", "loserfruit", "anthony_kongphan"
+        ];
+
+
+        let inputFilter = function(targetInput, targetDiv) {
+            $(targetInput).on('keyup', function() {
+                let search = $(this).val().toLowerCase();
+                $(targetDiv).show().filter(function() {
+                    return $(this).text().toLowerCase().indexOf(search) < 0;
+                }).hide();
+            });
+        };
+
+        let statusFilter = function(statusArr, targetDiv) {
+            console.log(statusArr)
+                // console.log(test);
+            $(targetDiv).filter(function() {
+                return statusArr.indexOf($(this).text()) < 0;
+            }).hide();
+
+        };
+        let online = [];
+        let offline = [];
+        let getDATA = function(arr) {
+            //
+            // create and initialize the deferred array to return
+            //
+            var deferredArr = [];
+            arr.forEach(function(ele, idx) {
+                deferredArr.push($.Deferred());
+                // console.log(ele,idx);
+            });
+            // console.log(deferredArr);
+            let cb = '?client_id=c292fn290f4pac7cpk4j4t137uk3tn&callback=?';
+            let url = 'https://api.twitch.tv/kraken/';
+            let urlChannel = "https://www.twitch.tv/"
+
+            arr.forEach(function(stream, idx) {
+
+                let newUrl = url + 'streams/' + stream + cb;
+
+
+                $.getJSON(newUrl).success(function(data) {
+
+                    let obj = {};
+
+                    // console.log(data);
+                    let streaming = (data.stream === null) ? false : true;
+                    if (streaming) {
+                        obj.theme = 'alert-success';
+                        obj.icon = 'fa fa-thumbs-up';
+                        obj.username = stream;
+                        online.push(stream);
+                        obj.channelUrl = data.stream.channel.url;
+                        obj.status = "ONLINE"
+
+
+                    } else {
+                        obj.theme = 'alert-danger';
+                        obj.icon = 'fa fa-thumbs-down';
+                        obj.username = stream;
+                        offline.push(stream);
+                        obj.channelUrl = urlChannel + stream.toLowerCase();
+                        obj.status = "OFFLINE"
+                    }
+
+                    // console.log(obj)
+
+                    $.getJSON(url + 'users/' + stream + cb).done(function(data, textStatus, jqXHR) {
+                        console.log(data);
+                        obj.logo = data.logo;
+                        obj.bio = data.bio;
+
+                        $(".streamers").append(
+                            `<div class="col-4 ${obj.theme} alert alert-dismissible fade show" role = "alert" >
+                                <div class="streamer">
+                                    <div class="d-flex flex-row justify-content-between align-items-center">
+                                        <img class="rounded" src=${obj.logo}>
+                                        <div class="content">
+                                            <a href=${obj.channelUrl} target="_blank">${obj.username}</a>
+                                            <p>${obj.bio}</p>
+                                        </div>
+                                        <span><i class="${obj.icon}" aria-hidden="true"></i><span>${obj.status}</span></span>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>                             
+                            `
+                        );
+
+                        //
+                        // resolve the current deferred element
+                        //
+                        deferredArr[idx].resolve();
+
+                    }).fail(function() {
+                        //
+                        // resolve (reject using then instead of done)
+                        // the current deferred element
+                        //
+                        deferredArr[idx].resolve();
+                    });
+
+                }).fail(function() {
+                    //
+                    // resolve (reject using then instead of done)
+                    // the current deferred element
+                    //
+                    deferredArr[idx].resolve();
+                }).done(function() {});
+                // console.log($.getJSON(newUrl));
+
+
+
+            });
+            // console.log(online);
+            return deferredArr;
+
+
+        };
+
+        // function splitByThree(parentDiv, childDiv) {
+        //     var divs = $(".streamers > .streamer");
+        //     for (var i = 0; i < divs.length; i += 3) {
+        //         divs.slice(i, i + 3).wrapAll("<div class='card-deck'></div>");
+        //     }
+        // }
+
+        let readyFN = function() {
+            $.when.apply($, getDATA(streamers)).done(function() {
+
+
+            });
+            inputFilter("#filterTextBox", ".alert");
+            $("#online").on('click', function() {
+                $(".streamers").empty();
+                $.when.apply($, getDATA(online)).done(function() {
+
+                    online = [];
+                });
+
+            });
+
+            $("#offline").on('click', function() {
+                $(".streamers").empty();
+                $.when.apply($, getDATA(offline)).done(function() {
+
+                    offline = [];
+                });
+
+
+            });
+            $("#all").on('click', function() {
+                $(".streamers").empty();
+                $.when.apply($, getDATA(streamers)).done(function() {
+
+
+                });
+
+            });
+            $(".streamer").on('click', function() {
+                alert($(this).text());
+                console.log("dey")
+            });
+
+
+
+        };
+
+
+
+        $(document).ready(readyFN);
+    </script>
+</body>
+
+</html>
